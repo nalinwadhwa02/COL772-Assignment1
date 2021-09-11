@@ -6,48 +6,39 @@
 
 import json
 import re
+import argparse
 
-
-# In[76]:
-
-
-with open('assignment_1_data/input.json','r') as input_file:
-  input_data = json.load(input_file)
-  input_file.close()
-
-
-# In[77]:
-
-
-with open('assignment_1_data/output.json','r') as output_file:
-  output_data = json.load(output_file)
-  output_file.close()
-
-
-# In[78]:
-
-
-#print(len(input_data))
-#print(input_data[0]['input_tokens'])
-#print(output_data[0])
-
-
-# In[80]:
-
+def read_cli():
+    parser = argparse.ArgumentParser(description="FSM Based Spoken Language Translator.")
+    parser.add_argument("--input_path",help="Json file to parsed",required=True,type=str)
+    parser.add_argument("--solution_path",help="Json output file to write to",required=True,type=str,default="output.json")
+    args = parser.parse_args()
+    return args
 
 def token_parser(token):
-    has_dig = re.search(r"\d",token)
-    has_sma = re.search(r"[a-z]",token)
-    has_cap = re.search(r"[A-Z]",token)
-    has_pun = re.search(r"[^\w\s]",token)
+    has_dig = re.search("\d",token)
+    has_sma = re.search("[a-z]",token)
+    has_cap = re.search("[A-Z]",token)
+    has_pun = re.search("[^\w\s]",token)
     if(has_pun and not (has_dig or has_sma or has_cap)):
         return 'sil'
     if(has_dig and not (has_cap or has_pun or has_sma)):
         year_check = re.search("^[12][0-9]{3}$",token)
         if(year_check):
             return o_year(token)
-        else:
-            return o_snumber(token)
+        spcl = re.search("\s",token)
+        if(spcl and spcl.span()[0] != 0 and spcl.span()[1]!=len(token)):
+            ans = o_number(token[:spcl.span()[0]],False)
+            token = token[spcl.span()[1]:]
+            spcl = re.search("\s",token)
+            while(spcl):
+                ans += " sil "+o_number(token[:spcl.span()[0]],False)
+                token = token[spcl.span()[1]:]
+                spcl = re.search("\s",token)
+            if(token != ""):
+                ans+= " sil "+o_number(token)
+            return ans
+        return o_snumber(token)
         pass
     if(has_dig and has_pun and not(has_sma or has_cap)):
         has_dot = re.findall("\.",token)
@@ -56,7 +47,17 @@ def token_parser(token):
         has_perc = re.findall("%",token)
         has_colon = re.search(":",token)
         if(has_colon):
-            return o_snumber(token[:has_colon.span()[0]]) + " " + o_snumber(token[has_colon.span()[1]:])
+            ans1 = o_snumber(token[:has_colon.span()[0]])
+            ans2 = o_snumber(token[has_colon.span()[1]:])
+            secs = re.search(":",token[has_colon.span()[1]:])
+            if(secs):
+                ans2 = o_snumber(token[has_colon.span()[1]:][:secs.span()[0]])
+                ans3 = o_snumber(token[has_colon.span()[1]:][secs.span()[1]:])
+                ans = ans1 + " hours " + ans2 + " minutes and " + ans3 + " seconds"
+                return ans
+            if(ans2 == "zero"):
+                ans2 = "hundred"
+            return  ans1 + " " + ans2
         if(len(has_perc)>0):
             token = re.sub("%","",token)
         has_oth = re.findall("[^\w\s\.-\/%,]",token)
@@ -64,12 +65,17 @@ def token_parser(token):
             #mixed frac
             common_frac = {
                     "1/2":"a half",
-                    "1/4":"a quarter"
+                    "1/4":"a quarter",
+                    "2/4":"two quarters",
+                    "3/4":"three quarters"
             }
             ans = ""
+            if(token[0] == '-'):
+                ans = "minus "
+                token = token[1:]
             if(re.search(" ",token)):
                 token = re.split(" ",token)
-                ans = o_snumber(token[0])
+                ans += o_snumber(token[0])
                 ans += " and "
                 if token[1] in common_frac:
                     ans += common_frac[token[1]]
@@ -171,8 +177,8 @@ def token_parser(token):
                 ans += " sil"
                 return ans
         return ans
-    if(has_dig and (has_sma or has_pun)):
-        spl = re.split("[\-\s\,\/]",token)
+    if(has_dig ):
+        spl = re.split("[\-\s\,\/\.]",token)
         newspl = []
         for i in spl:
             if not re.search("^\s*$",i):
@@ -184,8 +190,8 @@ def token_parser(token):
         mon_match={
             "jan":"january",
             "january":"january",
-            "feb":"febrary",
-            "febrary":"febrary",
+            "feb":"february",
+            "february":"february",
             "mar":"march",
             "march":"march",
             "apr":"april",
@@ -206,7 +212,7 @@ def token_parser(token):
             "dec":"december",
             "december":"december"
         }
-        has_mon = re.compile("(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|january|febrary|march|april|may|june|july|august|september|october|november|december)")
+        has_mon = re.compile("(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|january|february|march|april|may|june|july|august|september|october|november|december)")
         if(has_mon.search(token.lower())):
             if(len(spl) == 3):
                 #ddmmyyyy
@@ -218,66 +224,98 @@ def token_parser(token):
             if(len(spl) == 2):
                 #ddmm
                 if(dd.match(spl[0]) and spl[1].lower() in mon_match):
-                    return o_snumber(spl[0],True) + " of " + mon_match[spl[1].lower()]
+                    return "the " + o_snumber(spl[0],True) + " of " + mon_match[spl[1].lower()]
                 ##mmyy
                 if(spl[0].lower() in mon_match and yr.match(spl[1])):
                     return mon_match[spl[0].lower()]+ " " + o_year(spl[1])#time
-        timeam_match = re.compile("(a\.m\.|A\.M\.| AM | am )")
-        timepm_match = re.compile("(p\.m\.|P\.M\.| pm | PM )")
+                #mmdd
+                if(dd.match(spl[1]) and spl[0].lower() in mon_match):
+                    return mon_match[spl[0].lower()] + " " + o_snumber(spl[1],True)
+        #time
+        timeam_match = re.compile("(a\.m\.|A\.M\.|[\d ]AM|[\d ]am)")
+        timepm_match = re.compile("(p\.m\.|P\.M\.|[\d ]pm|[\d ]PM)")
         colon_match = re.compile(":")
         cmt = colon_match.search(token)
         tamt = timeam_match.search(token)
         tpmt = timepm_match.search(token)
         if( cmt or  tamt or tpmt):
-            token = re.sub("(a\.m\.|A\.M\.| AM | am |p\.m\.|P\.M\.| pm | PM )","",token)
+            token = re.sub("(a\.m\.|A\.M\.|AM|am|p\.m\.|P\.M\.|pm|PM)","",token)
             firstp = token
             seconp = ""
             if(cmt):
                 firstp = token[:cmt.span()[0]]
                 seconp = token[cmt.span()[1]:]
             ans = o_snumber(firstp)
-            if(cmt):
+            if(cmt and not re.search("00",seconp)):
                 ans += " " + o_snumber(seconp)
             if(tpmt):
                 ans += " p m"
             if(tamt):
                 ans += " a m"
+            ext = re.findall("[a-z]",token.lower())
+            for e in ext:
+                ans += " " + e
             return ans
         #currency
-        curr_units = re.compile("[$€₹¥£]")
+        curr_units = re.compile("([$€₹¥£]|Rs )")
         if curr_units.search(token):
-            has_oth = re.findall("[^\w\s\.-\/%]",spl[0])
+            #print(token)
+            spl = re.split("\s",token) 
+            has_oth = re.findall("[$€₹¥£]|Rs",spl[0])
             has_dot = re.search("\.",spl[0])
-            if(len(spl)>0 and len(has_oth)>0): 
-                token = re.sub("[^\w\s\.-\/%]","",spl[0])
-                ans= ""
-                if(has_dot):
-                    ans = o_decimal(spl[0])
-                else:
-                    ans = o_snumber(spl[0])
-                for i in range(1,len(spl)):
-                    ans+= " " + spl[i].lower()
-                if has_oth[0] == "$":
-                    ans += " dollars"
-                    return ans
-                if has_oth[0] == "€":
-                    ans += " euros"
-                    return ans
-                if has_oth[0] == "₹":
-                    ans += " rupees"
-                    return ans
-                if has_oth[0] == "¥":
-                    ans += " yen"
-                    return ans
-                if has_oth[0] == "£":
-                    ans += " pounds"
-                else:
-                    ans += " sil"
-                    return ans
+            spl[0] = re.sub("[$€₹¥£]|Rs","",spl[0])
+            ans= ""
+            while(re.search("^\s*$",spl[0])):
+                spl.pop(0)
+            if(has_dot):
+                ans = o_decimal(spl[0])
+            else:
+                ans = o_snumber(spl[0])
+            for i in range(1,len(spl)):
+                if re.search("cr",spl[i].lower()):
+                    spl[i] = "crore"
+                ans+= " " + spl[i].lower()
+            if re.search("m",spl[0].lower()):
+                ans+= " million"
+            if re.search("cr",spl[0].lower()):
+                ans+= " crore"
+            if has_oth[0] == "$":
+                ans += " dollars"
+                return ans
+            if has_oth[0] == "€":
+                ans += " euros"
+                return ans
+            if has_oth[0] == "₹":
+                ans += " rupees"
+                return ans
+            if has_oth[0] == "Rs":
+                ans += " rupees"
+                return ans
+            if has_oth[0] == "¥":
+                ans += " yen"
+                return ans
+            if has_oth[0] == "£":
+                ans += " pounds"
+                return ans
+        #spl
+        spl_suffixes={
+                "th":0,
+                "st":0,
+                "rd":0,
+                "nd":0
+        }
+        if(not re.search("[^\w]",token) and token[-2:] in spl_suffixes):
+            return o_snumber(token,True)
+        if(re.search("million",token)):
+            return o_snumber(token) + " million"
+        if(re.search("lakh",token)):
+            return o_snumber(token) + " lakh"
+        
         #units
         has_mult = re.compile(u"(\u00B2|\u00B3)")
-        has_unit = re.compile("(PB|GB|MB|KB|mi|km|cm|mm|g|kg|mg|s|hr|m)")
-        if(has_mult.search(token) or has_unit.search(token)):
+        has_unit = re.compile("(PB|GB|MB|KB|Gb|km2|mi2|mi|km|cm|mm|g|kg|mg|hr|ha)")
+        has_unit2 = re.compile("(m| s)")
+        if(has_mult.search(token) or has_unit.search(token) or has_unit2.search(token)):
             has_per = re.search("\/",token)
             firstp = token
             seconp = ""
@@ -298,60 +336,83 @@ def token_parser(token):
                 "kg": "kilogram",
                 "mg": "milligram",
                 "s" : "second",
+                " s" : "second",
                 "hr": "hour",
                 "mi": "mile",
                 "m" : "meter",
+                " m" : "meter",
                 "KB": "kilobyte",
                 "MB": "megabyte",
                 "GB": "gigabyte",
-                "PB": "peta byte"
+                "Gb": "gigabit",
+                "PB": "peta byte",
+                "km2": "square kilometer",
+                "mi2": "square mile",
+                "ha": "hectare"
             }
+            #print(token)
             mmt = has_mult.search(firstp)
             mut = has_unit.search(firstp)
+            if(not mut):
+                mut = has_unit2.search(firstp)
             ogfsp = firstp
             firstp = re.sub(u"(\u00B2|\u00B3)","",firstp)
-            firstp = re.sub("(PB|KB|MB|GB|mi|m|km|cm|mm|g|kg|mg|s|hr)","",firstp)
+            firstp = re.sub("(PB|KB|MB|GB|Gb|km2|mi2|mi|mm|km|cm|m|g|kg|mg|s|hr|ha)","",firstp)
             ans = ""
             if(re.search("\.",firstp)):
                 #print(firstp)
                 ans = o_decimal(firstp)
             else:
                 ans = o_snumber(firstp)
+            has_s = False
             if(mmt):
                 ans += " " + multp[ogfsp[mmt.span()[0]:mmt.span()[1]]] 
             if(mut):
                 ans += " " + units[ogfsp[mut.span()[0]:mut.span()[1]]] 
-                if(not has_per and firstp != '1'):
+                if(firstp != '1'):
                     ans+='s'
+                    has_s = True
+
             if(has_per):
                 ans+=' per'
+                has_unit2 = re.compile("s|m")
                 mmt = has_mult.search(seconp)
                 mut = has_unit.search(seconp)
+                #print(seconp)
+                if(not mut):
+                    mut = has_unit2.search(seconp)
                 ogfsp = seconp
                 if(mmt):
                     ans += " " + multp[ogfsp[mmt.span()[0]:mmt.span()[1]]] 
                 if(mut):
                     ans += " " + units[ogfsp[mut.span()[0]:mut.span()[1]]] 
-                    if(firstp != '1'):
+                    if(firstp != '1' and not has_s):
                         ans+='s'
             return ans
-        spl_suffixes={
-                "th":0,
-                "st":0,
-                "rd":0,
-                "nd":0
-        }
-        if(not re.search("[^\w]",token) and token[-2:] in spl_suffixes):
-            return o_snumber(token,True)
+        year_check = re.compile("^[12][0-9]{3}$")
+        if(token[-1] == 's' and year_check.search(token[:-1])):
+            return o_year(token[:-1],True)
+        if(re.search("\dpc",token) and not re.search("\s",token)):
+            return o_snumber(token)+" percent"
         #address
         pass
     if(not has_dig and not has_sma and has_cap):
+        common_abbr={
+                "tv":"t v",
+                "cd":"c d",
+        }
+        chl = re.sub("\.","",token.lower())
+        if chl in common_abbr:
+            return common_abbr[chl]
         #roman
         rom_match = re.compile("^M{0,3}(CM|CD|D?C{0,3})?(XC|XL|L?X{0,3})?(IX|IV|V?I{0,3})?$")
         if(rom_match.search(token)):
             return o_roman(token)
+        if(len(token)==1):
+            return "<self>"
+        #abbrv
         if(has_pun):
-            token = re.sub("[^\w\s]","",token)
+            token = re.sub("[^\w]","",token)
         token = token.lower()
         ans = token[0]
         for i in range(1,len(token)):
@@ -361,6 +422,22 @@ def token_parser(token):
         #abbrv
         return "<self>"
     if(not has_dig and not has_pun and has_sma):
+        numcaps = re.findall("[A-Z]",token)
+        numsma = re.findall("[a-z]",token)
+        if(len(numcaps)>len(numsma)):
+            token = token.lower()
+            ans = token[0]
+            for t in range(1,len(token)):
+                ans+= " " + token[t]
+            return ans
+        common_abbr={
+                "tv":"t v",
+                "cd":"c d",
+                "mes":"m e s",
+        }
+        chl = re.sub("\.","",token.lower())
+        if chl in common_abbr:
+            return common_abbr[chl]
         return "<self>"
     if(re.search("\s",token)):
         tokens = re.split("\s",token)
@@ -374,13 +451,13 @@ def token_parser(token):
                 val = tokens[t]
             ans += " " +val
         return ans
-    return "<unk>"
+    return "<self>"
 
 
 # In[81]:
 
 
-def o_year(token):
+def o_year(token,ies=False):
     ans = ""
     splcase = {
         "2000":0,
@@ -435,15 +512,33 @@ def o_year(token):
         "8":"eighty",
         "9":"ninety",
     }
+    m_ies={
+        "00":"hundreds",
+        "10":"tens",
+        "20":"twenties",
+        "30":"thirties",
+        "40":"forties",
+        "50":"fifties",
+        "60":"sixties",
+        "70":"seventies",
+        "80":"eighties",
+        "90":"nineties"
+    }
     if token in splcase:
-        ans = m_one[token[0]] + " thousand " + m_one[token[3]]
+        ans = m_one[token[0]] + " thousand"
+        if(m_one[token[3]]!="zero"):
+            ans += " "+ m_one[token[3]]
         return ans
     if token[0:2] in m_ten :
         ans += m_ten[token[0:2]]
     else:
         ans += m_ten[token[0]] + " " + m_one[token[1]]
     ans += " "
-    if token[2:4] in m_ten :
+    if(ies):
+        ans+= m_ies[token[2:4]]
+    elif token[2:4] == '00' :
+        ans += "hundred"
+    elif token[2:4] in m_ten :
         ans += m_ten[token[2:4]]
     else:
         ans += m_ten[token[2]] + " " + m_one[token[3]]
@@ -549,7 +644,7 @@ def o_snumber(token,oth = False):
         "16":"sixteenth",
         "17":"seventeenth",
         "18":"eighteenth",
-        "19":"nineteenht",
+        "19":"nineteenth",
         "20":"twentieth",
         "30":"thirtieth",
         "40":"fortieth",
@@ -593,7 +688,7 @@ def o_snumber(token,oth = False):
         ans = m_one[token[0]] + " hundred"
         if token[1:3] != "00" :
             if token[1] == '0':
-                ans += " and " + m_one[token[2]]
+                ans += " " + m_one[token[2]]
             else:
                 ans += " "
                 if(oth):
@@ -649,6 +744,65 @@ def o_snumber(token,oth = False):
                         ans += m_ten[token[3:5]]
                     else:
                         ans += m_ten[token[3]] + " " + m_one[token[4]]
+    elif(ln == 6):
+        ans1 = o_snumber(token[0:3])
+        ans2 = ""
+        if(re.search("[1-9]",token[3:6])):
+            ans2 = " " + o_snumber(token[3:6])
+        ans = ans1 + " thousand" + ans2
+    elif(ln == 7 or ln == 8 or ln == 9):
+        ans1 = ""
+        ans2 = ""
+        ans3 = ""
+        if(ln == 7):
+            ans1 = m_one[token[0]] + " million"
+            token = token[1:]
+        if(ln == 8):
+            ans1 = o_snumber(token[0:2]) + " million"
+            token = token[2:]
+        if(ln == 9):
+            ans1 = o_snumber(token[0:3]) + " million"
+            token = token[3:]
+        if(re.search("[1-9]",token[0:3])):
+            ans2 = " " + o_snumber(token[0:3]) + " thousand" 
+            token = token[3:]
+        if(re.search("[1-9]",token[0:3])):
+            ans3 =  " " + o_snumber(token[0:3])
+        ans = ans1 +  ans2 + ans3
+        return ans
+    elif(ln == 10):
+        ans = o_number(token)
+    elif(ln == 11 or ln == 12):
+        ans1 = ""
+        ans2 = ""
+        if(ln == 11):
+            ans1 = o_snumber(token[0:2]) + " billion"
+            token = token[2:]
+        elif(ln == 12):
+            ans1 = o_snumber(token[0:3])+ " billion"
+            token = token[3:]
+        while(token[0] == '0'):
+            token = token[1:]
+        if(token != ""):
+            ans2 = " " + o_snumber(token)
+        ans = ans1 + ans2
+    elif(ln == 13 or ln == 14 or ln == 15):
+        ans1 = ""
+        ans2 = ""
+        if(ln == 13):
+            ans1 = o_snumber(token[0]) 
+            token = token[1:]
+        if(ln == 14):
+            ans1 = o_snumber(token[0:2]) 
+            token = token[2:]
+        if(ln == 15):
+            ans1 = o_snumber(token[0:3])
+            token = token[3:]
+        while(token[0] == '0'):
+            token = token[1:]
+        if(token!=""):
+            ans2 = " " + o_snumber(token)
+        ans = ans1 + " trillion" + ans2
     return ans
 
 
@@ -685,7 +839,8 @@ def o_IP(token):
             ans += " sil " + o_number(token[:has_dot.span()[0]],False)
         token = token[has_dot.span()[1]:]
         has_dot = re.search("\W",token)
-    ans += " sil " + o_number(token)
+    #print(token)
+    ans += " sil " + o_number(token,False)
     return ans
 
 
@@ -695,7 +850,7 @@ def o_IP(token):
 def o_ddmmyyyy(token):
     mon_match={
         "1":"january",
-        "2":"febrary",
+        "2":"february",
         "3":"march",
         "4":"april",
         "5":"may",
@@ -726,7 +881,7 @@ def o_ddmmyyyy(token):
 def o_mmddyyyy(token):
     mon_match={
         "1":"january",
-        "2":"febrary",
+        "2":"february",
         "3":"march",
         "4":"april",
         "5":"may",
@@ -757,7 +912,7 @@ def o_mmddyyyy(token):
 def o_yyyymmdd(token):
     mon_match={
         "1":"january",
-        "2":"febrary",
+        "2":"february",
         "3":"march",
         "4":"april",
         "5":"may",
@@ -778,7 +933,7 @@ def o_yyyymmdd(token):
     mon = mon_match[token[:iden.span()[0]]]
     token= token[iden.span()[1]:]
     day = o_snumber(token,True)
-    ans = mon+" "+day+" "+yr
+    ans = "the "+day+" of "+mon+" "+yr 
     return ans
 
 def o_roman(token):
@@ -806,7 +961,7 @@ def o_roman(token):
         else:
             ans+=rom_char[token[i]]
             i+=1
-    return o_snumber(str(ans))
+    return  o_snumber(str(ans))
 
 
 
@@ -815,19 +970,35 @@ def o_roman(token):
 
 
 #main
-proc_data = []
-for i in range(0,len(input_data)):
-    ans = []
-    for token in input_data[i]['input_tokens']:
-        ans.append(token_parser(token))
-    entry = {
-        "sid" : i,
-        "output_tokens":ans
-    }
-    proc_data.append(entry)
 
-with open('proc.json','w') as proc_file:
-    json.dump(proc_data,proc_file,indent=2)
+
+if __name__ == "__main__":
+    args = read_cli()
+    input_path = args.input_path
+    soln_path = args.solution_path
+    with open(input_path,'r') as input_file:
+      input_data = json.load(input_file)
+      input_file.close()
+
+    """
+    with open('assignment_1_data/output.json','r') as output_file:
+      output_data = json.load(output_file)
+      output_file.close()
+    """
+
+    proc_data = []
+    for i in range(0,len(input_data)):
+        ans = []
+        for token in input_data[i]['input_tokens']:
+            ans.append(token_parser(token))
+        entry = {
+            "sid" : i,
+            "output_tokens":ans
+        }
+        proc_data.append(entry)
+
+    with open(soln_path,'w') as proc_file:
+        json.dump(proc_data,proc_file,indent=2)
 
 
 

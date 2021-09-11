@@ -606,7 +606,7 @@
       "<self>",
       "<self>",
       "sil",
-      "two hundred nineteen point four per kilometers",
+      "two hundred nineteen point four per square kilometers",
       "sil",
       "sil"
     ]
@@ -665,7 +665,7 @@
       "<self>",
       "<self>",
       "<self>",
-      "five hundred meters",
+      "five hundred million pounds",
       "sil"
     ]
   },
@@ -687,7 +687,7 @@
       "<self>",
       "<self>",
       "<self>",
-      " dollars",
+      "seven hundred fifty thousand dollars",
       "sil"
     ]
   },
@@ -730,9 +730,9 @@
     "sid": 37,
     "output_tokens": [
       "january fourteenth two thousand eight",
-      "five ten",
+      "five ten p m p s t",
       "sil",
-      "january eighth two thousand eight",
+      "the eighth of january two thousand eight",
       "sil",
       "sil"
     ]
@@ -743,7 +743,7 @@
       "<self>",
       "<self>",
       "<self>",
-      "nineteenht",
+      "nineteenth",
       "<self>",
       "sil",
       "<self>",
@@ -835,7 +835,7 @@
       "<self>",
       "<self>",
       "sil",
-      "one hundred seventy nine point four per kilometers",
+      "one hundred seventy nine point four per square kilometers",
       "sil",
       "sil"
     ]
@@ -879,7 +879,7 @@
       "<self>",
       "<self>",
       "<self>",
-      "seven dollars",
+      "seven million dollars",
       "<self>",
       "<self>",
       "<self>",
@@ -1033,7 +1033,7 @@
     "sid": 51,
     "output_tokens": [
       "sil",
-      "thirty five dollars",
+      "thirty five million dollars",
       "<self>",
       "<self>",
       "<self>",
@@ -1115,9 +1115,9 @@
       "<self>",
       "<self>",
       "<self>",
-      "nine zero",
+      "nine a m",
       "<self>",
-      "five zero",
+      "five p m",
       "<self>",
       "<self>",
       "<self>",
@@ -1159,7 +1159,7 @@
       "<self>",
       "<self>",
       "<self>",
-      "one hundred and nine",
+      "one hundred nine",
       "sil",
       "<self>",
       "twenty three",
@@ -1228,7 +1228,7 @@
       "<self>",
       "<self>",
       "<self>",
-      " dollars",
+      "nine hundred thousand dollars",
       "sil"
     ]
   },
@@ -1310,7 +1310,7 @@
       "sil",
       "<self>",
       "<self>",
-      "one hundred and two point one",
+      "one hundred two point one",
       "<self>",
       "sil"
     ]
@@ -1336,7 +1336,7 @@
       "<self>",
       "<self>",
       "<self>",
-      "February nineteen forty four",
+      "february nineteen forty four",
       "sil"
     ]
   },
@@ -1411,7 +1411,7 @@
       "<self>",
       "<self>",
       "<self>",
-      "five thirty",
+      "five thirty a m",
       "sil"
     ]
   },
@@ -1508,7 +1508,7 @@
       "<self>",
       "<self>",
       "sil",
-      "fourteen point six two kilometers",
+      "fourteen point six square kilometers",
       "sil",
       "sil"
     ]
@@ -1680,7 +1680,7 @@
       "sil",
       "twenty one",
       "<self>",
-      "twenty one seconds",
+      "twenty first",
       "<self>",
       "sil",
       "<self>",
@@ -1787,7 +1787,7 @@
       "<self>",
       "<self>",
       "sil",
-      "six hundred and four point two per square kilometers",
+      "six hundred four point two per square kilometers",
       "sil",
       "sil"
     ]
@@ -1848,7 +1848,7 @@
       "four sixteen",
       "sil",
       "sil",
-      "<self>",
+      "n t a p o",
       "sil",
       "two point four four",
       "sil",
@@ -1865,14 +1865,14 @@
       "<self>",
       "<self>",
       "<self>",
+      "t v",
       "<self>",
-      "<self>",
-      "seven zero p m",
+      "seven p m",
       "sil",
       "p s t",
       "sil",
       "<self>",
-      "eleven zero p m",
+      "eleven p m",
       "<self>",
       "t v",
       "five",
@@ -1908,7 +1908,7 @@
       "<self>",
       "<self>",
       "i s b n",
-      "",
+      "o sil seven five o six sil o six two five sil eight",
       "sil",
       "<self>",
       "<self>",
@@ -1959,7 +1959,7 @@
       "<self>",
       "eleven ninety eight",
       "sil",
-      "twelve o zero",
+      "twelve hundred",
       "<self>",
       "twelve o one",
       "sil"
@@ -2070,7 +2070,7 @@
     "sid": 106,
     "output_tokens": [
       "<self>",
-      "one February two thousand eight",
+      "the first of february two thousand eight",
       "sil"
     ]
   },
@@ -2080,7 +2080,7 @@
       "one o six sil two o o three sil two o three sil two one four",
       "<self>",
       "sil",
-      "g   n",
+      "g n",
       "sil",
       "two thousand five",
       "sil",
@@ -2131,9 +2131,9 @@
     "sid": 110,
     "output_tokens": [
       "i s b n",
-      "",
+      "o two five two o seven six seven two nine",
       "sil",
-      "",
+      "nine trillion seven hundred eighty billion two hundred fifty two million seventy six thousand seven hundred twenty five",
       "sil"
     ]
   },
@@ -2216,7 +2216,7 @@
       "<self>",
       "<self>",
       "<self>",
-      "nineteenht",
+      "nineteenth",
       "<self>",
       "sil",
       "<self>",
@@ -2291,7 +2291,7 @@
       "<self>",
       "<self>",
       "<self>",
-      "one thousand nine hundred forty seconds",
+      "nineteen forties",
       "sil"
     ]
   },
@@ -2304,7 +2304,7 @@
       "<self>",
       "sil",
       "<self>",
-      "nineteen zero",
+      "nineteen hundred",
       "<self>",
       "may twenty eighth nineteen forty eight",
       "sil",
@@ -2329,7 +2329,7 @@
       "<self>",
       "<self>",
       "<self>",
-      "one thousand seconds",
+      "one thousand crore rupees",
       "sil",
       "sil"
     ]
@@ -2405,7 +2405,7 @@
   {
     "sid": 124,
     "output_tokens": [
-      "h   m   g   s",
+      "h m g s",
       "<self>",
       "sil",
       "<self>",
@@ -2604,7 +2604,7 @@
       "<self>",
       "<self>",
       "one hundred meters",
-      "t",
+      "<self>",
       "thirty seven",
       "<self>",
       "sil",
@@ -2673,7 +2673,7 @@
       "<self>",
       "nine thirty",
       "<self>",
-      "eleven zero",
+      "eleven a m",
       "<self>",
       "<self>",
       "<self>",
@@ -2690,7 +2690,7 @@
     "sid": 137,
     "output_tokens": [
       "i s b n",
-      "",
+      "o sil five two one sil four o o seven seven five",
       "sil"
     ]
   },
@@ -2774,7 +2774,7 @@
       "two thousand five hundred eighty seven",
       "<self>",
       "sil",
-      "one thousand forty seven ha",
+      "one thousand forty seven hectares",
       "sil",
       "<self>",
       "<self>",
@@ -2820,7 +2820,7 @@
       "<self>",
       "<self>",
       "<self>",
-      "",
+      "nine hundred thousand",
       "<self>",
       "<self>",
       "<self>",
@@ -2874,7 +2874,7 @@
     "output_tokens": [
       "<self>",
       "<self>",
-      "three hundred and four",
+      "three hundred four",
       "<self>",
       "<self>",
       "sil",
@@ -2906,7 +2906,7 @@
       "five hundred forty seven",
       "sil",
       "<self>",
-      "four hundred",
+      "c d",
       "sil",
       "sil"
     ]
@@ -2930,7 +2930,7 @@
       "<self>",
       "<self>",
       "one fifty four",
-      "three fifths",
+      "minus three fifths",
       "sil"
     ]
   },
@@ -3089,7 +3089,7 @@
       "<self>",
       "<self>",
       "five",
-      "r",
+      "<self>",
       "four twelfths",
       "<self>",
       "<self>",
@@ -3097,7 +3097,7 @@
       "sil",
       "<self>",
       "seven point five peta bytes",
-      "two fourths",
+      "two quarters",
       "<self>",
       "<self>",
       "<self>",
@@ -3113,7 +3113,7 @@
       "<self>",
       "<self>",
       "<self>",
-      "seventeen grams",
+      "august seventeenth",
       "sil",
       "<self>",
       "eleven thirty",
@@ -3124,7 +3124,7 @@
       "<self>",
       "<self>",
       "<self>",
-      "seventeen grams",
+      "august seventeenth",
       "sil",
       "<self>",
       "eighteen fifteen",
@@ -3183,10 +3183,10 @@
       "<self>",
       "sil",
       "sil",
+      "m e p s",
       "<self>",
       "<self>",
-      "<self>",
-      "<unk>",
+      "fourteen percent",
       "<self>",
       "<self>",
       "<self>",
@@ -3234,7 +3234,7 @@
       "<self>",
       "<self>",
       "<self>",
-      "twenty one seconds",
+      "twenty first",
       "<self>",
       "<self>",
       "sil"
@@ -3246,7 +3246,7 @@
       "<self>",
       "<self>",
       "<self>",
-      "two thousand zero",
+      "two thousand",
       "<self>",
       "sil",
       "forty two percent",
@@ -3454,7 +3454,7 @@
     "output_tokens": [
       "sil",
       "<self>",
-      "three miles",
+      "three million",
       "<self>",
       "<self>",
       "<self>",
@@ -3482,7 +3482,7 @@
       "<self>",
       "<self>",
       "<self>",
-      "<unk>",
+      "three hundred million pounds",
       "<self>",
       "<self>",
       "<self>",
@@ -3627,7 +3627,7 @@
   {
     "sid": 184,
     "output_tokens": [
-      "<self>",
+      "i i s i",
       "<self>",
       "<self>",
       "<self>",
@@ -3688,7 +3688,7 @@
   {
     "sid": 187,
     "output_tokens": [
-      "fourteenth of may",
+      "the fourteenth of may",
       "sil",
       "<self>",
       "<self>",
@@ -3701,7 +3701,7 @@
       "<self>",
       "<self>",
       "<self>",
-      "twenty May."
+      "the twentieth of may"
     ]
   },
   {
@@ -3899,7 +3899,7 @@
     "sid": 197,
     "output_tokens": [
       "sil",
-      "two hundred fifty dollars",
+      "two hundred fifty million dollars",
       "<self>",
       "<self>",
       "<self>",
@@ -3921,7 +3921,7 @@
       "<self>",
       "<self>",
       "<self>",
-      "<self>",
+      "m e s",
       "sil",
       "<self>",
       "<self>",
@@ -3949,7 +3949,7 @@
       "<self>",
       "<self>",
       "<self>",
-      "one hundred and eight",
+      "one hundred eight",
       "<self>",
       "sil"
     ]
@@ -3995,7 +3995,7 @@
       "<self>",
       "<self>",
       "<self>",
-      "two two thousand seven hundred seven",
+      "two hours twenty seven minutes and seven seconds",
       "<self>",
       "sil"
     ]
@@ -4036,7 +4036,7 @@
     "sid": 204,
     "output_tokens": [
       "i s b n",
-      "",
+      "three sil nine eight o six seven seven three sil four sil six",
       "sil"
     ]
   },
@@ -4050,7 +4050,7 @@
       "<self>",
       "<self>",
       "<self>",
-      "two thousand zero",
+      "two thousand",
       "sil",
       "<self>",
       "<self>",
@@ -4159,7 +4159,7 @@
       "<self>",
       "<self>",
       "fourteen",
-      "w",
+      "<self>",
       "two o o nine sil o nine sil one o sil o three",
       "<self>",
       "sil",
@@ -4257,7 +4257,7 @@
       "<self>",
       "<self>",
       "<self>",
-      "sixty four m b",
+      "sixty four megabytes",
       "<self>",
       "g d d r",
       "three",
@@ -4367,7 +4367,7 @@
       "sil",
       "<self>",
       "<self>",
-      "one hundred per seconds",
+      "one hundred gigabits per second",
       "<self>",
       "<self>",
       "<self>",
@@ -4419,7 +4419,7 @@
       "<self>",
       "<self>",
       "<self>",
-      " dollars",
+      "four million five hundred thousand dollars",
       "sil"
     ]
   },
@@ -4442,7 +4442,7 @@
       "one sil eight nine eight o five one sil two two sil four",
       "sil",
       "i s b n",
-      "nine seven eight sil one sil eight nine eight o five one sil two two sil zero",
+      "nine seven eight sil one sil eight nine eight o five one sil two two sil o",
       "sil"
     ]
   },
