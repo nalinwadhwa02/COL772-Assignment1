@@ -27,15 +27,9 @@ with open('assignment_1_data/output.json','r') as output_file:
 # In[78]:
 
 
-print(len(input_data))
-print(input_data[0]['input_tokens'])
-print(output_data[0])
-
-
-# In[79]:
-
-
-proc_data = []
+#print(len(input_data))
+#print(input_data[0]['input_tokens'])
+#print(output_data[0])
 
 
 # In[80]:
@@ -45,9 +39,9 @@ def token_parser(token):
     has_dig = re.search("\d",token)
     has_sma = re.search("[a-z]",token)
     has_cap = re.search("[A-Z]",token)
-    has_pun = re.search("\W",token)
+    has_pun = re.search("[^\w\s]",token)
     if(has_pun and not (has_dig or has_sma or has_cap)):
-        return '<sil>'
+        return 'sil'
     if(has_dig and not (has_cap or has_pun or has_sma)):
         year_check = re.search("^[12][0-9]{3}$",token)
         if(year_check):
@@ -91,7 +85,7 @@ def token_parser(token):
                 return o_IP(token)
             pass
         if(len(has_dash)==1):
-            if(has_dash[0].span()[0] == 0):
+            if(token[0] == '-'):
                 ans = 'minus '+ o_snumber(token[1:])
             else:
                 return o_IP(token)
@@ -118,7 +112,7 @@ def token_parser(token):
                     ans += " yen"
                     return ans
                 else:
-                    ans += " <sil>"
+                    ans += " sil"
                     return ans
             #percent
             if len(has_perc)>0:
@@ -145,7 +139,7 @@ def token_parser(token):
                 ans += " yen"
                 return ans
             else:
-                ans += " <sil>"
+                ans += " sil"
                 return ans
         return ans
     if(has_dig and has_sma):
@@ -154,8 +148,13 @@ def token_parser(token):
         #address
         pass
     if(not has_dig and not has_sma and has_cap):
-        
-        pass
+        if(has_pun):
+            token = re.sub("[^\w\s]","",token)
+        token = token.lower()
+        ans = token[0]
+        for i in range(1,len(token)):
+            ans+=" "+token[i]
+        return ans
     if(not has_dig and not has_pun and has_sma):
         return "<self>"
     return "<unk>"
@@ -197,7 +196,7 @@ def o_year(token):
         "60":"sixty",
         "70":"seventy",
         "80":"eighty",
-        "90":"ninty",
+        "90":"ninety",
         "2":"twenty",
         "3":"thirty",
         "4":"forty",
@@ -205,7 +204,7 @@ def o_year(token):
         "6":"sixty",
         "7":"seventy",
         "8":"eighty",
-        "9":"ninty",
+        "9":"ninety",
     }
     if token[0:2] in m_ten :
         ans += m_ten[token[0:2]]
@@ -245,13 +244,13 @@ def o_number(token):
 # In[83]:
 
 
-o_number("111")
 
 
 # In[84]:
 
 
 def o_snumber(token,oth = False):
+    token = re.sub("[^\d]","",token)
     m_one = {
         "0":"zero",
         "1":"one",
@@ -283,7 +282,7 @@ def o_snumber(token,oth = False):
         "60":"sixty",
         "70":"seventy",
         "80":"eighty",
-        "90":"ninty",
+        "90":"ninety",
         "2":"twenty",
         "3":"thirty",
         "4":"forty",
@@ -291,7 +290,7 @@ def o_snumber(token,oth = False):
         "6":"sixty",
         "7":"seventy",
         "8":"eighty",
-        "9":"ninty",
+        "9":"ninety",
     }
     m_one_oth={
         "0":"zeroth",
@@ -332,7 +331,7 @@ def o_snumber(token,oth = False):
         "6":"sixty",
         "7":"seventy",
         "8":"eighty",
-        "9":"ninty",
+        "9":"ninety",
     }
     ln = len(token)
     ans = ""
@@ -447,10 +446,11 @@ def o_IP(token):
     token = token[has_dot.span()[1]:]
     has_dot = re.search("\W",token)
     while has_dot:
-        ans += " <sil> " + o_number(token[:has_dot.span()[0]])
+        if(has_dot.span()[0] > 0):
+            ans += " sil " + o_number(token[:has_dot.span()[0]])
         token = token[has_dot.span()[1]:]
         has_dot = re.search("\W",token)
-    ans += " <sil> " + o_number(token)
+    ans += " sil " + o_number(token)
     return ans
 
 
@@ -548,21 +548,25 @@ def o_yyyymmdd(token):
     
 
 
-# In[91]:
-
-
-o_yyyymmdd("2010/12,21")
 
 
 # In[92]:
 
 
-for i in range(0,100):
+#main
+proc_data = []
+for i in range(0,len(input_data)):
     ans = []
     for token in input_data[i]['input_tokens']:
         ans.append(token_parser(token))
-    for j in range(len(ans)):
-        if(ans[j]!=output_data[i]["output_tokens"][j]):
-            print("input: ",input_data[i]["input_tokens"],"\npred: ",ans,"\nans(",j,"): ",output_data[i]["output_tokens"])
-            break
+    entry = {
+        "sid" : i,
+        "output_tokens":ans
+    }
+    proc_data.append(entry)
+
+with open('proc.json','w') as proc_file:
+    json.dump(proc_data,proc_file,indent=2)
+
+
 
